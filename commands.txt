@@ -9,8 +9,6 @@ CREATE USER
 $ adduser <choose username>
 $ passwd <choose password>
 
-  // verify password
-
 ADD SUDO PRIVILEGES TO USER
 
 $ usermod -aG wheel <chosen username>
