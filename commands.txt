@@ -1,0 +1,137 @@
+SSH INTO VSI
+
+$ ssh root@<ip address>
+
+<---------- create user and switch from root ---------->
+
+CREATE USER
+
+$ adduser <choose username>
+$ passwd <choose password>
+
+  // verify password
+
+ADD SUDO PRIVILEGES TO USER
+
+$ usermod -aG wheel <chosen username>
+
+SWITCH FROM ROOT TO USER
+
+$ su - <username>
+
+CHECK SUDO PRIVILEGES ARE PROPERLY ENABLED
+
+$ sudo ls -la /root   // only root or sudo can undertake this command
+
+<---------- installing mongo ---------->
+
+CREATE MONGODB REPO FILE
+
+$ sudo vi /etc/yum.repos.d/mongodb-org.repo
+
+ADD FOLLOWING TO FILE
+
+[mongodb-org-3.4]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+
+CHECK MONGO REPO EXISTS
+
+$ yum repolist
+
+INSTALL MONDODB FROM REPO
+
+$ sudo yum install mongodb-org
+
+START MONGOD PROCESS
+
+$ sudo systemctl start mongod
+
+VERIFY MongoDB STARTED
+
+$ sudo tail /var/log/mongodb/mongod.log
+
+should see ' [listener] waiting for connections on port 27017 '
+
+ENTER DB SERVER
+
+$ mongo
+
+CHECK ITS STATUS
+
+$ systemctl is-enabled mongod; echo $?
+
+STOP MONGOD PROCESS
+
+$ sudo systemctl stop mongod
+
+<---------- installing Git ---------->
+
+INSTALL GIT
+
+$ sudo yum install git
+
+CHECK GIT VERSION
+
+$ git --version
+
+<---------- Clone Git Repo ---------->
+
+GENERATE GITHUB KEY (ON SERVER)
+
+$ ssh-keygen -t rsa
+
+ADD THE KEY
+
+$ ssh-add /home/<user>/.ssh/id_rsa_github   // 'github' can be called anything
+                                            // ie. ' id_rsa_<anything here>'
+
+LIKELY GET AUTH AGENT ERROR MESSAGE THEN TRY,
+
+$ eval `ssh-agent -s`
+
+then run the add key command again
+
+$ ssh-add /home/<user>/.ssh/id_rsa_github
+
+CLONE REPO
+
+$ git clone git@github.com:<whatever the git repo name is>
+
+<---------- install NodeJS ---------->
+
+ADD NODESOURCE YUM REPOSITORY
+
+$ curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
+
+INSTALL NODEJS AND NPM
+
+$ sudo yum install nodejs
+
+to check install and version
+
+$ node --version OR $ node -v
+
+<---------- we need Yarn too ---------->
+
+ADD YARN REPOSITORY
+
+$ curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
+
+IMPORT THE REPOSITORIES GPG KEY
+
+$ sudo rpm --import https://dl.yarnpkg.com/rpm/pubkey.gpg
+
+INSTALL YARN
+
+$ sudo yum install yarn
+
+to check install and version
+
+$ yarn --version OR $ yarn -v
+
+**** THEN BUILD AND RUN REPO ****
+DONE
